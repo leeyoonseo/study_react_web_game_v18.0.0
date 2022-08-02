@@ -18,13 +18,9 @@
     constructor(props) {
       super(props);
       this.state = { liked: false };
-
-      // 과거의 this binding
-      this.onClickButton = this.onClickButton.bind(this);
     }
 
-    // 과거의 this binding
-    onClickButton() {
+    onClickButton = () => {
       this.setState({ liked: true });
     }
 
