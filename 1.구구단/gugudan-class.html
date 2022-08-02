@@ -49,11 +49,14 @@
       const correct = this.state.first * this.state.second;
 
       if (answer === correct) { 
-        this.setState({
-          result: `'${correct}' 정답`,
-          first: Math.ceil(Math.random() * 9),
-          second: Math.ceil(Math.random() * 9),
-          value: '',
+        // setState는 비동기로 동작, prevState를 사용해서 문제 해결
+        this.setState(prevState => {
+          return {
+            result: '정답: ' + prevState.value,
+            first: Math.ceil(Math.random() * 9),
+            second: Math.ceil(Math.random() * 9),
+            value: '',
+          }
         });
       } else {
         this.setState({
