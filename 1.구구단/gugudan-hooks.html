@@ -14,6 +14,9 @@
 <script type="text/babel">
   'use strict'; 
 
+  // class와 hooks 차이
+  // 렌더링 문제, state가 바뀌면 GuGuDan함수 자체가 통째로 다시 실행된다. => 조금 더 느릴 수 있다.
+  // 메서드들도 다시 생성됨. 따라서 최적화 문제 고려해야한다. (class는 render함수만 재 실행됨)
   const GuGuDan = () => {
     const [first, setFirst] = React.useState(Math.ceil(Math.random() * 9));
     const [second, setSecond] = React.useState(Math.ceil(Math.random() * 9));
@@ -37,6 +40,8 @@
         setFirst(Math.ceil(Math.random() * 9));
         setSecond(Math.ceil(Math.random() * 9));
         setResult('정답: ' + value);
+        // prevResult 사용 가능
+        // setResult(prevResult => '정답: ' + value);
         setValue('');
         inputRef.current.focus();
       } else {
