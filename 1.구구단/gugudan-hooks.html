@@ -1,0 +1,72 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>웹 게임 - 구구단</title>
+</head>
+<body>
+<div id="root"></div>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<!--<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>-->
+<!--<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>-->
+
+<script type="text/babel">
+  'use strict'; 
+
+  const GuGuDan = () => {
+    const [first, setFirst] = React.useState(Math.ceil(Math.random() * 9));
+    const [second, setSecond] = React.useState(Math.ceil(Math.random() * 9));
+    const [value, setValue] = React.useState('');
+    const [result, setResult] = React.useState('');
+    const inputRef = React.useRef(null);
+
+    const onChange = e => {
+      setValue(e.target.value);
+      setResult('');
+    };
+
+    const onSubmit = e => {
+      e.preventDefault();
+
+      const answer = parseInt(value);
+      const correct = first * second;
+
+      if (answer === correct) { 
+        // setState는 비동기로 동작, prevState를 사용해서 문제 해결
+        setFirst(Math.ceil(Math.random() * 9));
+        setSecond(Math.ceil(Math.random() * 9));
+        setResult('정답: ' + value);
+        setValue('');
+        inputRef.current.focus();
+      } else {
+        setResult('땡');
+        setValue('');
+        inputRef.current.focus();
+      }
+    };
+
+    return (
+      <React.Fragment>
+        <div>{first} X {second} 는?</div>
+        <form onSubmit={onSubmit}>
+          <input 
+            ref={inputRef}
+            type="number" 
+            placeholder="정답을 입력하세요..."  
+            value={value} 
+            onChange={onChange}
+          />
+          <button type="submit">입력</button>
+        </form>
+        <div>{result}</div>
+      </React.Fragment>
+    )
+  };
+</script>
+
+<script type="text/babel">
+  ReactDOM.createRoot(document.querySelector('#root')).render(<GuGuDan />); // React 18버전 코드
+</script>
+</body>
+</html> 
