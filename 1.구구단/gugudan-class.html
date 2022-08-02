@@ -16,15 +16,24 @@
 
   // Class
   class GuGuDan extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        first: Math.ceil(Math.random() * 9),
-        second: Math.ceil(Math.random() * 9),
-        value: '',
-        result: '',
-      };
-    }
+    // constructor (O)
+    // constructor(props) {
+    //   super(props);
+    //   this.state = {
+    //     first: Math.ceil(Math.random() * 9),
+    //     second: Math.ceil(Math.random() * 9),
+    //     value: '',
+    //     result: '',
+    //   };
+    // }
+
+    // constructor (X)
+    state = {
+      first: Math.ceil(Math.random() * 9),
+      second: Math.ceil(Math.random() * 9),
+      value: '',
+      result: '',
+    };
 
     onChange = e => {
       this.setState({ 
@@ -33,12 +42,15 @@
       });
     };
 
-    onSubmit = (e) => {
+    onSubmit = e => {
       e.preventDefault();
 
-      if (parseInt(this.state.value) === this.state.first * this.state.second) { 
+      const answer = parseInt(this.state.value);
+      const correct = this.state.first * this.state.second;
+
+      if (answer === correct) { 
         this.setState({
-          result: '정답',
+          result: `'${correct}' 정답`,
           first: Math.ceil(Math.random() * 9),
           second: Math.ceil(Math.random() * 9),
           value: '',
@@ -53,7 +65,8 @@
     
     render() {
       return (
-        <div>
+        // <></> -> 현재 바벨 버전이 지원을 안하는데, Fragment가 에러가 날 경우에 React.Fragment 사용
+        <React.Fragment>
           <div>{this.state.first} X {this.state.second} 는?</div>
           <form onSubmit={this.onSubmit}>
             <input 
@@ -62,10 +75,10 @@
               value={this.state.value} 
               onChange={this.onChange}
             />
-            <button>입력</button>
+            <button type="submit">입력</button>
           </form>
           <div>{this.state.result}</div>
-        </div>
+        </React.Fragment>
       );
     }
   }
