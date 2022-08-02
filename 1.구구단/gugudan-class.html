@@ -58,12 +58,20 @@
             value: '',
           }
         });
+
+        this.input.focus();
       } else {
         this.setState({
           result: '땡',
           value: '',
         });
       }
+    };
+
+    input;
+
+    onRefInput = c => { 
+      this.input = c; 
     };
     
     render() {
@@ -73,6 +81,7 @@
           <div>{this.state.first} X {this.state.second} 는?</div>
           <form onSubmit={this.onSubmit}>
             <input 
+              ref={this.onRefInput}
               type="number" 
               placeholder="정답을 입력하세요..."  
               value={this.state.value} 
