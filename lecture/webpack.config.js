@@ -1,4 +1,5 @@
 const path = require('path');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = {
   name: 'wordrelay-setting',
@@ -29,16 +30,32 @@ module.exports = {
           }],
           '@babel/preset-react'
         ], 
-        plugins: ['@babel/plugin-proposal-class-properties'],
+        plugins: [
+          '@babel/plugin-proposal-class-properties',
+          'react-refresh/babel', // 바벨이 최신 문법 -> 옛날 자바스크립트로 트랜스 파일링 할때 핫리로딩 기능을 추가로 해줌
+        ],
       },
     }]
   },
+
+  plugins: [
+    new ReactRefreshWebpackPlugin()
+  ],
 
   // 출력
   output: {
     path: path.join(__dirname, 'dist'), // 현재 폴더 경로에서 dist
     filename: 'app.js',
+    publicPath: '/dist/',
   }, 
+
+  // 변경점을 감지하여 저장한 결과물을 수정해준다. 
+  devServer: {
+    devMiddleware: { publicPath: '/dist' }, // output의 publicPath
+    static: { directory: path.resolve(__dirname) }, // 정적 파일의 경로(index.html)
+    // static: { directory: path.resolve(__dirname, 'src') }, // - src 폴더 하위에 있을 경우 예시
+    hot: true,
+  },
 };
 
 // babel
