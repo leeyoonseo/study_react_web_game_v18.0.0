@@ -1,6 +1,6 @@
 const React = require('react');
 // const ReactDom = require('react-dom');
-const WordRelay = require('./WordRelay');
+const WordRelay = require('./WordRelayHooks');
 const ReactDOMClient  = require('react-dom/client');
 
 // Error: JSX는 JS 문법이 아님 -> webpeck에서 설정해야함!
