@@ -3,27 +3,29 @@ const { useState, useRef } = React;
 
 const WordRelayHooks = () => {
   const [word, setWord] = useState('강남');
-  const [value, setValue] = useState('');
   const [result, setResult] = useState('');
   const refInput = useRef(null);
 
   const onSubmitForm = e => {
     e.preventDefault();
+    const newWord = refInput.current.value;
 
-    if (word[word.length - 1] === value[0]) {
-      setWord(value);
+    if (word[word.length - 1] === newWord[0]) {
+      setWord(newWord);
       setResult('딩동댕');
-      setValue('');
+
+      refInput.current.value = '';
       refInput.current.focus();
     } else {
       setResult('땡');
-      setValue('');
+
+      refInput.current.value = '';
       refInput.current.focus();
     }
   };
 
   const onChangeInput = e => {
-    setValue(e.target.value);
+    setValue(newWord);
   };
 
 
@@ -31,11 +33,12 @@ const WordRelayHooks = () => {
     <>
       <div>{word}</div>
       <form onSubmit={onSubmitForm}>
-        <input
-          ref={refInput}
-          value={value}
-          onChange={onChangeInput}
-        />
+        {/* 
+          uncontrolled input: changed가 필요하지 않은 경우. (매우 간단할 때) submit 시 사용할 때만 가능 
+          - value -> defaultValue
+          - value 사용 시 controlled input으로 간주될 수 있다.
+        */}
+        <input ref={refInput} defaultValue="" />
         <button>입력</button>
       </form>
       <div>{result}</div>
