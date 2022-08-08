@@ -28,12 +28,14 @@ class NumberBaseball extends Component {
   onSubmitForm = e => {
     e.preventDefault();
     if (this.state.value === this.state.answer.join('')) {
-      this.setState({
-        result: '홈런!',
-        tries: [...this.state.tries, {
-          try: this.state.value, 
+      this.setState((prevState) => {
+        return {
           result: '홈런!',
-        }]
+          tries: [...prevState.tries, {
+            try: prevState.value, 
+            result: '홈런!',
+          }]
+        }
       })
     } else {
       const answerArray = this.state.value.split('').map(v => parseInt(v));
@@ -59,11 +61,13 @@ class NumberBaseball extends Component {
           }
         }
 
-        this.setState({
-          tries: [...this.state.tries, {
-            try: this.state.value,
-            result: `${strike} 스트라이크, ${ball} 볼입니다.`,
-          }]
+        this.setState(prevState => {
+          return {
+            tries: [...prevState.tries, {
+              try: prevState.value,
+              result: `${strike} 스트라이크, ${ball} 볼입니다.`,
+            }]
+          }
         })
       } 
     }
