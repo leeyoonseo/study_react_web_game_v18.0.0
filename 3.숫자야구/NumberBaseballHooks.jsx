@@ -80,7 +80,10 @@ const NumberBaseballHooks = () => {
         </form>
         <div>시도: {tries.length}</div>
         <ul>
-          {tries.map((v, i) => (
+        {tries.map((v, i) => (
+            // 부모 컴포넌트가 리렌더링되면 반드시 자식 컴포넌트도 리렌더링된다.
+            // props, state가 바뀔때도 되지만.
+            // 근데 try가 리렌더링될 이유가 필요 없는데, memo를 통해 해결하자 (props, state 둘 다 가능)
             <Try key={`${i + 1}차 시도`} tryInfo={v} />
           ))}
         </ul>

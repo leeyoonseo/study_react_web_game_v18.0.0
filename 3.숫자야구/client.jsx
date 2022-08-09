@@ -6,4 +6,8 @@ import NumberBaseball from './NumberBaseballHooks';
 // const ReactDOMClient  = require('react-dom/client');
 // const NumberBaseball = require('./NumberBaseball');
 
-ReactDOMClient.createRoot(document.querySelector('#root')).render(<NumberBaseball />);
+ReactDOMClient.createRoot(document.querySelector('#root')).render(
+  <React.StrictMode>
+    <NumberBaseball />
+  </React.StrictMode>
+);
