@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import Try from './Try';
 
 function getNumbers() { // 숫자 네 개를 겹치지 않고 랜덤하게 뽑아줌
@@ -52,6 +52,9 @@ class NumberBaseball extends Component {
           answer: getNumbers(),
           tries: [],
         });
+
+        // this.input.focus();
+        this.input.current.focus(); // createRef를 사용하면 current를 추가해줘야한다.
       } else {
         for (let i = 0; i < 4; i += 1) {
           if (answerArray[i] === this.state.answer[i]) {
@@ -66,19 +69,27 @@ class NumberBaseball extends Component {
             tries: [...prevState.tries, {
               try: prevState.value,
               result: `${strike} 스트라이크, ${ball} 볼입니다.`,
-            }]
+            }],
+            value: '',
           }
-        })
+        });
+        this.input.current.focus(); // createRef를 사용하면 current를 추가해줘야한다.
+
       } 
     }
   };
+
+  // ref를 hooks와 비슷하게 만드는 방법은?, createRef를 쓰자
+  // input;
+  // onUInputRef = c => this.input = c;
+  inputRef = createRef();
 
   render() {
     return (
       <>
         <h1>{this.state.result}</h1>
         <form onSubmit={this.onSubmitForm}>
-          <input maxLength={4} value={this.state.value} onChange={this.onChange} />
+          <input ref={this.inputRef} maxLength={4} value={this.state.value} onChange={this.onChange} />
         </form>
         <div>시도: {this.state.tries.length}</div>
         <ul>

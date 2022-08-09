@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Try from './TryHooks';
 
 function getNumbers() { // 숫자 네 개를 겹치지 않고 랜덤하게 뽑아줌
@@ -23,6 +23,7 @@ const NumberBaseballHooks = () => {
   const [answer, setAnswer] = useState(getNumbers); // lazy init 기법
   const [result, setResult] = useState('');
   const [tries, setTries] = useState([]);
+  const inputRef = useRef(null);
 
   const onChange = e => {
     setValue(e.target.value);
@@ -50,6 +51,7 @@ const NumberBaseballHooks = () => {
         setValue('');
         setAnswer(getNumbers());
         setTries([]);
+        inputRef.current.focus();
       } else {
         for (let i = 0; i < 4; i += 1) {
           if (answerArray[i] === answer[i]) {
@@ -59,24 +61,24 @@ const NumberBaseballHooks = () => {
           }
         }
 
+        setValue('');
         setTries((prevTries) => {
           return [...prevTries, {
             try: value,
             result: `${strike} 스트라이크, ${ball} 볼입니다.`,
           }]
         });
+        inputRef.current.focus();
       } 
     }
 
   };
 
-  
-
   return (
     <>
         <h1>{result}</h1>
         <form onSubmit={onSubmitForm}>
-          <input maxLength={4} value={value} onChange={onChange} />
+          <input ref={inputRef} maxLength={4} value={value} onChange={onChange} />
         </form>
         <div>시도: {tries.length}</div>
         <ul>
