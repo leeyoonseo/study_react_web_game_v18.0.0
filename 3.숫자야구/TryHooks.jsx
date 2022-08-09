@@ -1,10 +1,18 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 
-const TryHooks = memo(({tryInfo}) => {
+const TryHooks = memo(({ tryInfo }) => {
+  // props는 자식이 변경하면 안된다.
+  // 만약 props를 바꿔야한다면 state에 넣어준다. (좋은 구조는 아니다.)
+  // 부모로부터 받은 props를 state로 넣을 수 있다.
+  const [result, setResult] = useState(tryInfo.result);
+  const onClick = () => {
+    setResult('props를 바꾸기위해 state에 넣었다.');
+  };
+
   return (
     <li>
       <div>{tryInfo.try}</div>
-      <div>{tryInfo.result}</div>
+      <div onClick={onClick}>{result}</div>
     </li>
   );
 });

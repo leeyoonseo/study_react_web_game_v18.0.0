@@ -85,6 +85,7 @@ class NumberBaseball extends Component {
   inputRef = createRef();
 
   render() {
+    // render 내부에 this.setState를 넣으면 무한 반복됨 (setState가 발생하면 render가 일어나기에!)
     return (
       <>
         <h1>{this.state.result}</h1>
