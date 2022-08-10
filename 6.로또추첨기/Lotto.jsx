@@ -24,8 +24,8 @@ class Lotto extends Component {
   };
 
   timeouts = [];
-  
-  componentDidMount() {
+
+  runTimeouts = () => {
     const { winNumbers } = this.state;
     for (let i = 0; i < winNumbers.length - 1; i++) {
       this.timeouts[i] = setTimeout(() => {
@@ -44,16 +44,36 @@ class Lotto extends Component {
       });
     }, 7000);
   }
-
   
-  componentWillMount() {
+  componentDidMount() {
+    this.runTimeouts();
+  }
+
+  componentWillUnmount() {
     this.timeouts.forEach(v => {
       clearTimeout(v);
     })
   }
 
+  componentDidUpdate() {
+    if (this.state.winBalls.length === 0) {
+      this.runTimeouts();
+    }    
+  }
+
+  onClickRedo = () => {
+    this.setState({
+      winNumbers: getWinNumbers(),
+      winBalls: [],
+      bonus: null,
+      redo: false,
+    });
+
+    this.timeouts = [];
+  };
+
   render() {
-    const { winBalls, bonus, redo, onClickRedo } = this.state;
+    const { winBalls, bonus, redo } = this.state;
 
     return (
       <>
@@ -62,8 +82,8 @@ class Lotto extends Component {
           {winBalls.map(v => <Ball key={v} number={v} />)}
         </div>
         <div>보너스!</div>
-        {bonus && <Ball number={bonus} />}
-        {redo && <button onClick={onClickRedo}>한 번 더!</button>}
+        {bonus && <Ball key={bonus} number={bonus} />}
+        {redo && <button onClick={this.onClickRedo}>한 번 더!</button>}
       </>
     );
   }
