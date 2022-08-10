@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 // 클래스 라이프사이클
 // constructor -> render -> ref -> componentDidMount
@@ -21,7 +21,7 @@ const computerChoice = imgCoord => {
   return Object.entries(rspCoords).find(v => v[1] === imgCoord)[0];
 };
 
-class RSP extends Component {
+class RSP extends PureComponent {
   state = {
     imgCoord: '0',
     score: 0,
@@ -62,13 +62,17 @@ class RSP extends Component {
         imgCoord: rspCoords.보,
       });
     } else if (imgCoord === rspCoords.보) {
+      // 연속된 setState가 있을 경우. (로직 상 떨어진 setState는 해당 안됨)
+      // 리액트에서 한번에 모아서 처리를 하기에
+      // setState -> render -> setState -> render가 일어나는게 아니라
+      // setState -> render로 된다.
       this.setState({
         imgCoord: rspCoords.바위,
       });
     }
   }
 
-  onClickBtn = choice => {
+  onClickBtn = choice => () => {
     const { imgCoord } = this.state;
     clearInterval(this.interval);
 
@@ -91,6 +95,7 @@ class RSP extends Component {
         return {
           result: '졌습니다!',
           score: prevState.score - 1,
+
         }
       });
     }
@@ -106,9 +111,9 @@ class RSP extends Component {
       <>
         <div id="computer" style={{ background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoord} 0` }}></div>
         <div>
-          <button id="rock" className="btn" onClick={() => this.onClickBtn('바위')}>바위</button>
-          <button id="scissor" className="btn" onClick={() => this.onClickBtn('가위')}>가위</button>
-          <button id="paper" className="btn" onClick={() => this.onClickBtn('보')}>보</button>
+          <button id="rock" className="btn" onClick={this.onClickBtn('바위')}>바위</button>
+          <button id="scissor" className="btn" onClick={this.onClickBtn('가위')}>가위</button>
+          <button id="paper" className="btn" onClick={this.onClickBtn('보')}>보</button>
         </div>
         <div>{result}</div>
         <div>현재 {score}점</div>
