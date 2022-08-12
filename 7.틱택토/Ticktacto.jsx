@@ -4,12 +4,25 @@ import Table from './Table';
 const initialState = {
   winner: '',
   turn: 'O',
-  tableData: [['', '', ''], ['', '', ''], ['', '', '']]
+  tableData: [
+    ['', '', ''], 
+    ['', '', ''], 
+    ['', '', ''],
+  ],
 };
+
+export const CHANGE_TURN = 'CHANGE_TURN';
+export const SET_WINNER = 'SET_WINNER';
+export const CLICK_CELL = 'CLICK_CELL';
 
 const reducer = (state, action) => {
   switch(action.type) {
-    case 'SET_WINNER':
+    case CHANGE_TURN: 
+      return {
+        ...state,
+        turn: state.turn === 'O' ? 'X' : 'O',
+      }
+    case SET_WINNER:
       // 불변성
       // state.winner = action.winner (X)
 
@@ -18,6 +31,17 @@ const reducer = (state, action) => {
         ...state,
         winner: action.winner,
       }
+    case CLICK_CELL: {
+      const tableData = [...state.tableData];
+      // 불변성은 immer라는 라이브러리로 가독성 문제를 해결한다.
+      tableData[action.row] = [...tableData[action.row]]; 
+      tableData[action.row][action.cell] = state.turn;
+
+      return {
+        ... state,
+        tableData,
+      }
+    }
   }
 };
 
@@ -32,17 +56,15 @@ const Ticktacto = () => {
   const onClickTable = useCallback(() => {
     // dispacth안에 들어가는 건 action 객체.
     dispatch({
-      type: 'SET_WINNER',
+      type: SET_WINNER,
       winner: 'O',
     });
   }, []);
 
   return (
     <>
-      <Table 
-        onClick={onClickTable} 
-        tableData={state.tableData} 
-      />
+      {/* dispatch를 tictacto에서 가지고 있고 사용은 td에서 하기에 td까지 props를 전달해야한다... */}
+      <Table tableData={state.tableData} dispatch={dispatch}/>
       {state.winner && <div>{state.winner}님의 승리</div>}
     </>
   );
