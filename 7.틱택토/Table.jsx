@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Tr from './Tr';
 
 const Table = ({ tableData, dispatch }) => {
@@ -6,7 +6,7 @@ const Table = ({ tableData, dispatch }) => {
     <table>
       <tbody>
         {Array(tableData.length).fill().map((_, i) => (
-           <Tr 
+            <Tr 
               rowData={tableData[i]} 
               rowIndex={i}
               key={`tr_${i}`} 
