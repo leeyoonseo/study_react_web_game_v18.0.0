@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, memo, useMemo } from 'react';
 import { TableContext, CODE, OPEN_CELL, CLICK_MINE, FLAG_CELL, QUESTION_CELL, NORMALIZE_CELL } from './MineSweeper'; 
 
 const getTdStyle = code => {
@@ -30,6 +30,8 @@ const getTdStyle = code => {
 };
 
 const getTdText = code => {
+  // 처음 렌더링이 된 후에, useMemo로인해서 리렌더링은 클릭되는 td에 대한 부분만 리렌더링이 일어난다.
+  // console.log('getTdText 렌더링');
   switch (code) {
     case CODE.NORMAL:
       return '';
@@ -49,9 +51,9 @@ const getTdText = code => {
   }
 };
 
-const Td = ({ rowIndex, cellIndex }) => {
+const Td = memo(({ rowIndex, cellIndex }) => {
   const { tableData, halted, dispatch } = useContext(TableContext);
-  console.log(tableData[rowIndex][cellIndex]);
+  // console.log(tableData[rowIndex][cellIndex]);
 
   const onClickTd = useCallback(() => {
     if (halted) return;
@@ -118,15 +120,35 @@ const Td = ({ rowIndex, cellIndex }) => {
     }
   }, [tableData[rowIndex][cellIndex], halted]);
 
+  // 실제로는 useMemo가 되었기 때문에 리렌더링이 안되야한다.
+  // 확인은 내부에서 선언한 함수에 콘솔을 넣어보도록. (getTdText 확인)
+  // return useMemo(() => (
+  //   <td
+  //     style={getTdStyle(tableData[rowIndex][cellIndex])}
+  //     onClick={onClickTd}
+  //     onContextMenu={onRightClickTd}
+  //   >
+  //     {getTdText(tableData[rowIndex][cellIndex])}
+  //   </td>
+  // ), [tableData[rowIndex][cellIndex]]);
+
+  // 위와 같이 작업하는것이 확인하기 어렵다면 아래의 RealTd 컴포넌트를 만들어서 사용하자
+  return <RealTd onClickTd={onClickTd} onRightClickTd={onRightClickTd} data={tableData[rowIndex][cellIndex]} />
+});
+
+const RealTd = memo(({ onClickTd, onRightClickTd, data }) => {
+  // devtools에서는 반짝이나 실제 console.log 찍히는 것을 확인하면, 
+  // 변경되는 회수에 맞춰서 렌더링되고 있다. === 즉, memo가 잘되고있다!
+  // console.log('RealTd 렌더');
   return (
     <td
-      style={getTdStyle(tableData[rowIndex][cellIndex])}
+      style={getTdStyle(data)}
       onClick={onClickTd}
       onContextMenu={onRightClickTd}
     >
-      {getTdText(tableData[rowIndex][cellIndex])}
+      {getTdText(data)}
     </td>
-  );
-};
+  )
+});
 
 export default Td;

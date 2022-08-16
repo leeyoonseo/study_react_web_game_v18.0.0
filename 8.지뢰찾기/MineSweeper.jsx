@@ -267,6 +267,8 @@ const MineSweeper = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { tableData, halted } = state;
   // dispatch는 변하지 않으므로 inputs에 안 넣어도된다.
+  // contextAPI에서는 useMemo필수. 
+  // contextAPI는 value가 바뀔때마다 리렌더링하므로!! 중요!!
   const value = useMemo(() => ({ tableData, halted, dispatch }), [state.tableData]);
 
   useEffect(() => {
