@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { TableContext } from './MineSweeper'; 
 import Td from './Td';
 
-const Tr = ({ dispatch }) => {
+const Tr = ({ rowIndex }) => {
+  const { tableData } = useContext(TableContext);
+
   return (
     <tr>
-      <Td dispatch={dispatch} />
+      {tableData[0] && Array(tableData[0].length).fill().map((_, i) => (
+        <Td
+          key={`td${i}`}
+          rowIndex={rowIndex}
+          cellIndex={i}
+        />
+      ))}
     </tr>
   );
 };

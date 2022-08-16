@@ -29,6 +29,39 @@ const initialState = {
   result: '',
 };
 
+const plantMine = (row, cell, mine) => {
+  console.log(row, cell, mine);
+  const shuffle = [];
+  const candidate = Array(row * cell).fill().map((_, i) => {
+    return i;
+  });
+  
+  while (candidate.length > row * cell - mine) {
+    const chosen = candidate.splice(Math.floor(Math.random() * candidate.length), 1)[0];
+    shuffle.push(chosen);
+  }
+
+  const data = [];
+  for (let i = 0; i < row; i++) {
+    const rowData = [];
+    data.push(rowData);
+
+    for (let j = 0; j < cell; j++) {
+      rowData.push(CODE.NORMAL);
+    }
+  }
+
+  for (let k = 0; k < shuffle.length; k++) {
+    const ver = Math.floor(shuffle[k] / cell);
+    const hor = shuffle[k] % cell;
+    data[ver][hor] = CODE.MINE;
+  }
+
+  console.log(data);
+
+  return data;
+};
+
 export const START_GAME = 'START_GAME';
 
 const reducer = (state, action) => {
@@ -46,11 +79,10 @@ const reducer = (state, action) => {
 
 const MineSweeper = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { timer, result } = state;
-  const value = useMemo(() => {
+  const value = useMemo(() => ({
     tableData: state.tableData,
     dispatch // dispatch는 항상 같다
-  }, [state.tableData]);
+  }), [state.tableData]);
 
 
   return (
@@ -60,9 +92,9 @@ const MineSweeper = () => {
     // <TableContext.Provider value={{ tableData: state.tableData, dispatch }}>
     <TableContext.Provider value={value}>
       <Form />
-      <div>{timer}</div>
-      <Table dispatch={dispatch} /> 
-      <div>{result}</div>
+      <div>{state.timer}</div>
+      <Table /> 
+      <div>{state.result}</div>
     </TableContext.Provider>
   );
 };
