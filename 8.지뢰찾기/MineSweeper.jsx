@@ -1,4 +1,4 @@
-import React, { createContext, useMemo, useReducer } from 'react';
+import React, { createContext, useEffect, useMemo, useReducer } from 'react';
 import Table from './Table';
 import Form from './Form';
 
@@ -15,6 +15,11 @@ export const CODE = {
 
 // contextAPI가 성능 최적화가 힘듬
 export const TableContext = createContext({
+  data: {
+    row: 0,
+    cell: 0,
+    mine: 0,
+  },
   tableData: [
     [-1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1],
@@ -22,13 +27,22 @@ export const TableContext = createContext({
   ],
   dispatch: () => { },
   halted: false,
+  openedCount: 0,
+  timer: 0,
 });
 
 const initialState = {
+  data: {
+    row: 0,
+    cell: 0,
+    mine: 0,
+  },
   tableData: [],
   timer: 0,
   result: '',
   halted: false,
+  openedCount: 0,
+  timer: 0,
 };
 
 const plantMine = (row, cell, mine) => {
@@ -70,14 +84,22 @@ export const CLICK_MINE = 'CLICK_MINE';
 export const FLAG_CELL = 'FLAG_CELL';
 export const QUESTION_CELL = 'QUESTION_CELL';
 export const NORMALIZE_CELL = 'NORMALIZE_CELL';
+export const INCREMENT_TIMER = 'INCREMENT_TIMER';
 
 const reducer = (state, action) => {
   switch (action.type) {
     case START_GAME: {
       return {
         ...state,
+        data: {
+          row: action.row,
+          cell: action.cell,
+          mine: action.mine,
+        },
+        openedCount: 0,
         tableData: plantMine(action.row, action.cell, action.mine),
         halted: false,
+        timer: 0,
       }
     }
     case OPEN_CELL: {
@@ -87,8 +109,7 @@ const reducer = (state, action) => {
       });
 
       const checked = [];
-      // tableData[action.row] = [...state.tableData[action.row]];
-      // tableData[action.row][action.cell] = CODE.OPENED;
+      let openedCount = 0;
 
       const checkAround = (row, cell) => {
         if (row < 0 || row >= tableData.length || cell < 0 || cell >= tableData[0].length) {
@@ -154,14 +175,31 @@ const reducer = (state, action) => {
           }
         }
 
+        if (tableData[row][cell] === CODE.NORMAL) {
+          // 칸이 닫힌 칸일 경우 카운트 증가 (중복 칸을 카운트 해버려서 생기는 버그 해결)
+          openedCount += 1;
+        }
         tableData[row][cell] = count;
       };
 
       checkAround(action.row, action.cell);
 
+      let result = '';
+      let halted = false;
+
+      console.log(state.data.row * state.data.cell - state.data.mine, state.openedCount, openedCount);
+      // 승리
+      if (state.data.row * state.data.cell - state.data.mine === state.openedCount + openedCount) {
+        halted = true;
+        result = `${state.timer}초만에 승리하셨습니다.`;
+      }
+
       return {
         ...state,
         tableData,
+        openedCount: state.openedCount + openedCount,
+        halted,
+        result,
       }
     }
     case CLICK_MINE: {
@@ -213,17 +251,37 @@ const reducer = (state, action) => {
         tableData,
       }
     }
+    case INCREMENT_TIMER: {
+      return {
+        ...state,
+        timer: state.timer + 1,
+      }
+    }
     default:
       return state;
   }
 };
 
 const MineSweeper = () => {
+
   const [state, dispatch] = useReducer(reducer, initialState);
   const { tableData, halted } = state;
   // dispatch는 변하지 않으므로 inputs에 안 넣어도된다.
   const value = useMemo(() => ({ tableData, halted, dispatch }), [state.tableData]);
 
+  useEffect(() => {
+    let timer;
+
+    if (!halted) {
+      timer = setInterval(() => { 
+        dispatch({ type: INCREMENT_TIMER });
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(timer);
+    }
+  }, [halted]);
 
   return (
     // dispatch를 props로 전달하지 않고 contextAPI를 통해 전달한다. (Provider)
